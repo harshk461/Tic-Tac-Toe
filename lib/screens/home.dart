@@ -10,9 +10,18 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<String> displayExOh = ['', '', '', '', '', '', '', '', ''];
   bool ohTurn = true; //first player is started with O
+  int filedBox = 0;
+
+  var myTextStyle = TextStyle(fontSize: 30.0, color: Colors.white);
   void _tapped(int index) {
     setState(() {
-      displayExOh[index] = ohTurn ? 'O' : 'X';
+      if (ohTurn && displayExOh[index] == '') {
+        displayExOh[index] = 'O';
+        filedBox++;
+      } else if (!ohTurn && displayExOh[index] == '') {
+        displayExOh[index] = 'X';
+        filedBox++;
+      }
       ohTurn = !ohTurn;
       _checkWinner();
     });
@@ -65,51 +74,138 @@ class _HomeState extends State<Home> {
         displayExOh[2] == displayExOh[6] &&
         displayExOh[2] != '') {
       _showDialog(displayExOh[2]);
+    } else if (filedBox == 9) {
+      _showDrawDialog();
     }
   }
 
   void _showDialog(String winner) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
           title: Text("WINNER! IS $winner"),
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  _clearBoard();
+                  Navigator.of(context).pop();
+                },
+                child: Text("Play Again"))
+          ],
+        );
+      },
+    );
+    if (winner == 'O') {
+      setState(() {
+        ohscore++;
+      });
+    } else if (winner == 'X') {
+      setState(() {
+        oxscore++;
+      });
+    }
+  }
+
+  void _showDrawDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("DRAW!"),
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  _clearBoard();
+                  Navigator.of(context).pop();
+                },
+                child: Text("Play Again"))
+          ],
         );
       },
     );
   }
 
+  void _clearBoard() {
+    for (int i = 0; i < 9; i++) {
+      setState(() {
+        displayExOh[i] = '';
+      });
+    }
+    filedBox = 0;
+  }
+
+  int ohscore = 0;
+  int oxscore = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[800],
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: GridView.builder(
-          itemCount: 9,
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                _tapped(index);
-              },
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
               child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade700),
-                ),
-                child: Center(
-                  child: Text(
-                    displayExOh[index],
-                    style: TextStyle(
-                      fontSize: 40.0,
-                      color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Column(
+                        children: [
+                          Text("Player X", style: myTextStyle),
+                          Text(oxscore.toString(), style: myTextStyle),
+                        ],
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Column(
+                        children: [
+                          Text("Player O", style: myTextStyle),
+                          Text(ohscore.toString(), style: myTextStyle),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
-            );
-          },
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GridView.builder(
+                  itemCount: 9,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        _tapped(index);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade700),
+                        ),
+                        child: Center(
+                          child: Text(
+                            displayExOh[index],
+                            style: TextStyle(
+                              fontSize: 40.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
