@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
+import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,7 +14,99 @@ class _HomeState extends State<Home> {
   bool ohTurn = true; //first player is started with O
   int filedBox = 0;
 
-  var myTextStyle = TextStyle(fontSize: 30.0, color: Colors.white);
+  var myTextStyle = const TextStyle(fontSize: 30.0, color: Colors.white);
+
+  int ohscore = 0;
+  int oxscore = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[800],
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Column(
+                      children: [
+                        Text("Player X", style: myTextStyle),
+                        Text(oxscore.toString(), style: myTextStyle),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Column(
+                      children: [
+                        Text("Player O", style: myTextStyle),
+                        Text(ohscore.toString(), style: myTextStyle),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GridView.builder(
+                  itemCount: 9,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        _tapped(index);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade700),
+                        ),
+                        child: Center(
+                          child: Text(
+                            displayExOh[index],
+                            style: const TextStyle(
+                              fontSize: 40.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  Text(
+                    "TIC TAC TOE",
+                    style: myTextStyle,
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  Text(
+                    "@CREATEDBYHARSH",
+                    style: myTextStyle,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   void _tapped(int index) {
     setState(() {
       if (ohTurn && displayExOh[index] == '') {
@@ -92,7 +186,7 @@ class _HomeState extends State<Home> {
                   _clearBoard();
                   Navigator.of(context).pop();
                 },
-                child: Text("Play Again"))
+                child: const Text("Play Again"))
           ],
         );
       },
@@ -114,14 +208,14 @@ class _HomeState extends State<Home> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: Text("DRAW!"),
+          title: const Text("DRAW!"),
           actions: [
             ElevatedButton(
                 onPressed: () {
                   _clearBoard();
                   Navigator.of(context).pop();
                 },
-                child: Text("Play Again"))
+                child: const Text("Play Again"))
           ],
         );
       },
@@ -135,79 +229,5 @@ class _HomeState extends State<Home> {
       });
     }
     filedBox = 0;
-  }
-
-  int ohscore = 0;
-  int oxscore = 0;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[800],
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Column(
-                        children: [
-                          Text("Player X", style: myTextStyle),
-                          Text(oxscore.toString(), style: myTextStyle),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Column(
-                        children: [
-                          Text("Player O", style: myTextStyle),
-                          Text(ohscore.toString(), style: myTextStyle),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GridView.builder(
-                  itemCount: 9,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        _tapped(index);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade700),
-                        ),
-                        child: Center(
-                          child: Text(
-                            displayExOh[index],
-                            style: TextStyle(
-                              fontSize: 40.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
